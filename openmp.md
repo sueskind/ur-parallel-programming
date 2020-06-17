@@ -1,29 +1,27 @@
 # OpenMP Cheatsheet
 
 ## Table of contents
-[OpenMP Cheatsheet](#openmp-cheatsheet)
-  * [Table of contents](#table-of-contents)
-  * [Basics](#basics)
-    + [Hello World](#hello-world)
-    + [Compilation](#compilation)
-  * [Runtime functions](#runtime-functions)
-  * [Parallel regions](#parallel-regions)
-    + [Clauses](#clauses)
-      - [num_threads(num)](#num-threads-num-)
-      - [default, shared, private, firstprivate](#default--shared--private--firstprivate)
-      - [threadprivate, copyin](#threadprivate--copyin)
-      - [reduction](#reduction)
-      - [if](#if)
-  * [Workshare constructs](#workshare-constructs)
-    + [single/master](#single-master)
-      - [nowait](#nowait)
-      - [copyprivate](#copyprivate)
-    + [sections](#sections)
-    + [do](#do)
-      - [collapse](#collapse)
-      - [schedule](#schedule)
-    + [critical](#critical)
-    + [Others](#others)
+ * [Basics](#basics)
+   + [Hello World](#hello-world)
+   + [Compilation](#compilation)
+ * [Runtime functions](#runtime-functions)
+ * [Parallel regions](#parallel-regions)
+   + [Clauses](#clauses)
+     - [num_threads](#num_threadsnum)
+     - [default, shared, private, firstprivate](#default-shared-private-firstprivate)
+     - [threadprivate, copyin](#threadprivate-copyin)
+     - [reduction](#reduction)
+     - [if](#if)
+ * [Workshare constructs](#workshare-constructs)
+   + [single/master](#singlemaster)
+     - [nowait](#nowait)
+     - [copyprivate](#copyprivate)
+   + [sections](#sections)
+   + [do](#do)
+     - [collapse](#collapse)
+     - [schedule](#schedule)
+   + [critical](#critical)
+   + [Others](#others)
 
 ## Basics
 
@@ -72,7 +70,7 @@ gfortran -fopenmp name.f90
 
 ### Clauses
 
-#### num_threads(num)
+#### num_threads
 How many threads are used for this region.
 
 ```{fortran}
