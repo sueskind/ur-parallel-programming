@@ -1,34 +1,33 @@
 # Fortran Cheatsheet
 
-Hier ein denglisches Cheatsheet, bzw. Zusammenfassung über alle Fortran Syntax- und Sprachfeatures aus dem Parallel Programming Kurs. Wird laufend übers Semester erweitert. Dann muss man in den Hausaufgaben nicht immer erst 3 PDFs mit 50 Slides durch skippen bis man die eine Sache gefunden hat. :)
 
 ## Table of contents
  * [Hello World](#Hello-World)
  * [Basic program structure](#Basic-program-structure)
    * [Subroutines](#Subroutines)
    * [Functions](#Functions)
- * [Variablen](#Variablen)
+ * [Variables](#Variables)
    * [Attributes](#Attributes)
    * [Strings/Characters](#StringsCharacters)
    * [Numeric precision aka kind values](#Numeric-precision-aka-kind-values)
  * [Arrays](#Arrays)
    * [Static Arrays](#Static-Arrays)
    * [Allocatable Arrays](#Allocatable-Arrays)
-   * [Initialisierung](#Initialisierung)
+   * [Initialization](#Initialization)
    * [Array intrinsics](#Array-intrinsics)
  * [Control structures](#Control-structures)
    * [Loops](#Loops)
    * [if ... then ... else](#if--then--else)
  * [Intrinsic functions](#Intrinsic-functions)
-   * [Mathe](#Mathe)
+   * [Math](#Math)
    * [Type Conversion](#Type-Conversion)
-   * [Hilfsmethoden für Numerics](#Hilfsmethoden-für-Numerics)
-   * [Weitere](#Weitere)
- * [Eigene Types](#Eigene-Types)
-   * [Vererbung bzw. extends](#Vererbung-bzw-extends)
+   * [Helper methods for numerics](#Helper-methods-for-numerics)
+   * [Others](#Others)
+ * [Custom Types](#Custom-Types)
+   * [Inheritance](#Inheritance)
  * [Modules](#Modules)
- * [Mehrere Files nutzen](#Mehrere-Files-nutzen)
- * [Kleiner Style Guide](#Kleiner-Style-Guide)
+ * [Use multiple files](#Use multiple files)
+ * [Brief style guide](#Brief-style-guide)
 
 TODO:
  * Logic .or. .and. ...
@@ -42,7 +41,7 @@ program hello_world
     print *, "Hello World!"
 end program hello_world
 ```
-Kompilieren mit `gfortran helloworld.f90` oder `gfortran -o outname helloworld.f90`.
+Compile with `gfortran helloworld.f90` or `gfortran -o outname helloworld.f90`.
 
 
 ## Basic program structure
@@ -56,15 +55,15 @@ program name
 end program name
 ```
 
-Generell werden Programme von oben nach unten kompiliert - man kann nur Sachen benutzen, die man weiter oben definiert hat.
+Generally, programs get compiled from top to bottom. Only earlier defined things can be used.
 
 ### Subroutines
-Wenn man Teile eines Programs "outsourcen" will (meistens aus Übersichtlichkeitsgründen oder wenn man öfter das gleiche macht, z.B. Logging-Routine). Haben keinen Rückgabewert (dafür siehe Function).
+Soubroutines do not have return values.
 ```fortran
-subroutine name(var1, var2)   ! natürlich beliebig viele Variablen
-  implicit none   ! muss man immer extra machen
+subroutine name(var1, var2)   ! as many arguments as you wish
+  implicit none   ! otherwise some symbols are predefined
 
-  ! Variablen deklarieren. Parameter und temporäre Variablen in dieser subroutine.
+  ! Declare variables
   integer     :: var1
   real        :: var2
   integer     :: a    
@@ -72,111 +71,109 @@ subroutine name(var1, var2)   ! natürlich beliebig viele Variablen
   ! >>>Program statements here<<<
 end subroutine name
 ```
-Subroutinen werden im programm mit `call name(var1, ...)` aufgerufen.
+Call subroutines in a programm with `call name(var1, ...)`.
 
 ### Functions
 
-Es gibt 3 Varianten eine Funktion zu definieren - alle äquivalent (Beispiel `distance()` function):
+There are 3 major variants to define a function, all are equivalent. Example `disatance()` function:
 
-#### Variante 1
+#### Variant 1
 ```fortran
-real function distance(x, y)  ! Rückgabetyp im Titel
+real function distance(x, y)  ! Return type in title
   implicit none
   real  :: x, y
 
-  distance = abs(x - y)       ! Dem Funktionsnamen am Ende den Rückgabewert assignen
+  distance = abs(x - y)       ! Assign the return value to the function name at the end
 end function distance
 ```
 
-#### Variante 2
+#### Variant 2
 ```fortran
 function distance(x, y)
   implicit none
   real  :: x, y
-  real  :: distance       ! Hier den Rückgabetyp über Funktionsnamen definieren
+  real  :: distance       ! Define return type here
 
-  distance = abs(x - y)   ! Dem Funktionsnamen am Ende den Rückgabewert assignen
+  distance = abs(x - y)   ! Assign the return value to the function name at the end
 end function distance
 ```
 
-#### Variante 2
+#### Variant 2
 ```fortran
-function distance(x, y) result(d)  ! Hier sagen, welche Variable den Rückgabewert enthält
+function distance(x, y) result(d)  ! Define which variable will be the return value
   implicit none
   real  :: x, y
-  real  :: d      ! Hier den Rückgabetyp definieren
+  real  :: d      ! Define return type
 
-  d = abs(x - y)  ! Den Rückgabewert irgendwo assignen
+  d = abs(x - y)  ! Assign the return value anywhere in the function body
 end function distance
 ```
 
 
-## Variablen
+## Variables
 ```fortran
-implicit none                   ! einfach immer hinmachen, sonst sind bestimmte Variablennamen schon vordeklariert
-integer             :: i        ! Ganzzahl
-real                :: r        ! Fließkommazahl
-complex             :: c        ! Komplexe Zahl
-logical             :: l        ! Wahr oder Falsch
-character           :: ch       ! Buchstabe oder Strings
+implicit none
+integer             :: i        ! Integer
+real                :: r        ! Floating point
+complex             :: c        ! Complex number
+logical             :: l        ! True or false
+character           :: ch       ! Character or strings
 
-integer             :: a, b     ! Mehrere vom selben Typ
+integer             :: a, b     ! Declare multiple variables at once
 ```
 
 ### Attributes
-Kommen hinter den Datentyp, z.B.:
+
 ```fortran
 integer, parameter  :: const1
 ```
 ```fortran
-parameter       ! Konstante Zahl, muss direkt initialisiert werden (mit = 1.5345 z.B.)
+parameter       ! Constant, must be immediately initialized (e.g. with = 1.5345)
 
-! Für functions/subroutines:
-intent(in)      ! Diese Variable kann nur gelesen werden
-intent(out)     ! Diese Variable soll nicht gelesen werden
-intent(inout)   ! Unnötig, aber signalisiert, dass die Variable gelesen und beschrieben wird
-optional        ! Optionaler Parameter, kann mit present() überprüft werden, ob übergeben wurde
+! For functions/subroutines:
+intent(in)      ! Read-only variable
+intent(out)     ! Not supposed to read this variable
+intent(inout)   ! Signals that this variable is vor reading and writing
+optional        ! Marks an optional parameter, use present() to check for presence
 
-save            ! Wert wird über mehrere Funktionencalls gespeichert
-! Achtung: integer :: i = 5 ist das gleiche wie integer, save :: i = 5. Am besten nur Konstanten (parameter) in der Deklaration initialisieren.
+save            ! Save value over multiple function calls
+! Caution: integer :: i = 5 is the same as integer, save :: i = 5. It is advisable to only initialize constants at declaration
 
-! Für modules:
-private         ! Variable nur im Modul sichtbar
-public          ! Variable auch außerhalb des Moduls sichtbar
+! For modules:
+private         ! Module visibility
+public          ! Variable visible outside of module
 protected       ! Variable read only
 ```
 
 ### Strings/Characters
 ```fortran
-character(len=10)       :: var1                             ! Dieser String kann maximal 10 Zeichen lang sein
-character(*), parameter :: var2 = "Wer das liest ist doof"  ! Bei Konstanten Strings kann man die String Länge mit `*` erkennen lassen
+character(len=10)       :: var1              ! This string can have at most 10 characters
+character(*), parameter :: var2 = "foo bar"  ! Recognize length of constant strings with *
 ```
 
 ### Numeric precision aka kind values
-Jeder Datentyp hat (weil PC Speicher halt endlich ist) einen maximalen Wertebereich. Wenn man diesen größer oder kleiner machen will kann man das wie folgt:
-```fortran
-! 'kind' value bestimmen (immer vom Typ 'integer, parameter'):
-integer, parameter  :: ik = selected_int_kind(e)     ! kind value für einen integer in range -10^e bis 10^e
-integer, parameter  :: rk = selected_real_kind(p)    ! kind value für einen real mit garantiert p präzisen Stellen nach dem Komma
-integer, parameter  :: sk = selected_real_kind(p, e) ! kind value für einen real mit p Kommastellen und range -10^e bis 10^e
 
-! 'kind' value übergeben
+```fortran
+! Determine 'kind' value (kind values are of type 'integer, parameter'):
+integer, parameter  :: ik = selected_int_kind(e)     ! kind value for an integer in range -10^e bis 10^e
+integer, parameter  :: rk = selected_real_kind(p)    ! kind value for a real with guaranteed p digits after the decimal point
+integer, parameter  :: sk = selected_real_kind(p, e) ! kind value for a real with guaranteed p digits after the decimal point and range -10^e to 10^e
+
+! Assign 'kind' value
 integer(kind=ik)    :: i
 real(kind=rk)       :: r
-real(sk)            :: s ! 'kind' kann man auch weg lassen
-complex(sk)         :: c ! complex nimmt einen real kind
+real(sk)            :: s ! 'kind=' is not needed
+complex(sk)         :: c ! complex takes the same kind as real
 
-! auch literal constants brauchen einen kind, wenn sie zu lang werden:
+! Literal constants also need a kind value when they get too long
 integer, parameter      :: pik = selected_real_kind(18)
-real(rk), parameter     :: pi = 3.141592653589793239_pik    ! Einfach hinten anhängen
+real(rk), parameter     :: pi = 3.141592653589793239_pik    ! Append with _
 ```
-Für die kind Variable ein `k`, `_k` oder `_kind` an den Variablennamen anzuhängen ist Konvention (und Konventionen sind gut, vor allem bei so unübersichtlichen Sprachen wie Fortran lol).
+Appending `k`, `_k` or `_kind` to the kind variable name is convention.
 
 
 ## Arrays
-Hier geht der Spaß los.
-
-Indices gehen standardmäßig bei 1 los (iihh...), der letzte ist inklusive. Die Anzahl der Elemente bekommt man also mit `oben - unten + 1`. Mann kann aber selber festlegen (auch negative) wo die Indices losgehen/aufhören. Anders als in C, Java, Python (und jeder anderen guten Sprache) ist der erste Index der schnelle und der letzte der langsame.
+Indices start with 1. The last index is inclusive. Number of elements is therefore determined by `last - first + 1`. Fortran allows for defining which is the first and which is the last index. For multidimensional arrays the first index is the fastest one (column-major).
 
 ### Static Arrays
 Größe wird zur Compiletime festgelegt. Werden auf Stack gespeichert -> nicht mega viel RAM für Stack, aber sollte reichen.
