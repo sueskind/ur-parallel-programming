@@ -176,49 +176,49 @@ Appending `k`, `_k` or `_kind` to the kind variable name is convention.
 Indices start with 1. The last index is inclusive. Number of elements is therefore determined by `last - first + 1`. Fortran allows for defining which is the first and which is the last index. For multidimensional arrays the first index is the fastest one (column-major).
 
 ### Static Arrays
-Größe wird zur Compiletime festgelegt. Werden auf Stack gespeichert -> nicht mega viel RAM für Stack, aber sollte reichen.
+Set array size at compile time. -> They are stored on the stack (memory consideration for large arrays).
 ```fortran
-integer, dimension(10)        :: v    ! Integer Array mit 10 Elementen: v(1), v(2), ..., v(10)
-real, dimension(10, 5)        :: A    ! Real 2D-Array mit 10x5 Elementen: A(1, 1), A(2, 1), ..., A(10, 5)
-complex, dimension(10, 5, 3)  :: T    ! Complex 3D-Array mit 10x5x3 Elementen: T(1, 1, 1), T(2, 1, 1), ..., T(10, 5, 3)
+integer, dimension(10)        :: v    ! Integer array with 10 elements: v(1), v(2), ..., v(10)
+real, dimension(10, 5)        :: A    ! Real 2D-array with 10x5 elements: A(1, 1), A(2, 1), ..., A(10, 5)
+complex, dimension(10, 5, 3)  :: T    ! Complex 3D-array with 10x5x3 elements: T(1, 1, 1), T(2, 1, 1), ..., T(10, 5, 3)
 
-integer, dimension(-5:3, 4:7) :: M    ! Integer Array mit 3-(-5)+1 = 9 mal 7-4+1 = 4 Elementen: M(-5, 4), M(-4, 4), ..., M(3, 7)
+integer, dimension(-5:3, 4:7) :: M    ! Integer array mit 3-(-5)+1 = 9 times 7-4+1 = 4 elementen: M(-5, 4), M(-4, 4), ..., M(3, 7)
 
-! Äquivalent ist:
+! Equivalent:
 integer   :: v(10)
 real      :: A(10, 5)
 complex   :: T(10, 5, 3)
 integer   :: M(-5:3, 4:7)
 ```
 
-### Allocatable Arrays
-Man kann die Größe zur Runtime festlegen. Werden auf dem Heap gespeichert -> mehr RAM.
+### Allocatable arrays
+Allocate arrays and their size at runtime. They are stored on the heap.
 ```fortran
-! Rang (also Dimensionen) vom Array wird hier schon festgelegt
+! Rank (= dimensions) of array has to be known beforehand
 integer, dimension(:), allocatable      :: v        ! Array
 integer, dimension(:, :), allocatable   :: A        ! 2D-Array
-integer, allocatable                    :: B(:, :)  ! Äquivalent
+integer, allocatable                    :: B(:, :)  ! Equivalent
 
-! Hier Sachen machen
+! Code possible here
 
-allocate(v(5:10))             ! Größe wird erst hier festgelegt
-allocate(A(1, 5:20), B(5, 6)) ! Man kann auch mehrere gleichzeitig allocaten
+allocate(v(5:10))             ! Set array size
+allocate(A(1, 5:20), B(5, 6)) ! Allocate multiple at the same time
 
-deallocate(v, A, B)           ! Den Speicher wieder freigeben (da freut sich das OS)
+deallocate(v, A, B)           ! Free space
 
-allocated(A)                  ! Praktisch für if(allocated(A)) deallocate(A)
-call move_alloc(A, B)         ! Deallocates A, allocates B. ACHTUNG subroutine -> 'call' nicht vergessen
+allocated(A)                  ! Useful for if(allocated(A)) deallocate(A)
+call move_alloc(A, B)         ! Deallocates A, allocates B. This is a subroutine -> 'call' needed
 ```
 
-### Initialisierung
-Wenn man nicht initialisiert, ist der Ausgangszustand undefiniert! Nicht wie bei Java!
+### Initialization
+Not initializing values will leave them undefined, not predefined with zeros.
 ```fortran
 ! literal
 v = (/3, 1, 5, 2, 3, 4/)
-v = [3, 1, 5, 2, 3, 4]  ! äquivalent
-v = 5                   ! v = [5, 5, ...], praktisch für 0er initialisierung
+v = [3, 1, 5, 2, 3, 4]  ! equivalent
+v = 5                   ! v = [5, 5, ...], useful for initialization with zeros
 
-! normale loop
+! regular (do-) loop
 do i = 1, 5
   do j = 3, 8
     A(i, j) = 2 * i * j
@@ -227,53 +227,52 @@ end do
 
 ! implicit loop
 v = (/ (i, i = 1,5) /)
-v = [ (i, i = 1,5) ]    ! äquivalent
+v = [ (i, i = 1,5) ]    ! equivalent
 
 ! forall loop
 forall (i=1:5,   j=3:8)         A(i, j) = 2 * i * j
 forall (i=1:5:2, j=3:8:3)       A(i, j) = i + 5 * j   ! Step size
-forall (i=1:5,   j=3:8, i==j)   A(i, j) = 2 * i * j   ! logische Bedingung
+forall (i=1:5,   j=3:8, i==j)   A(i, j) = 2 * i * j   ! Logical condition
 ```
 
 ### Array intrinsics
-Nice Abkürzungen, endlich mal was gutes an Fortran. ;)
+Shorthands for arrays.
 ```fortran
-integer   :: v(10), w(10), A(10, 10)  ! Gegeben
+integer   :: v(10), w(10), A(10, 10)
 
-v(3:)       ! Alles ab 3tem Index
-v(:5)       ! Alles bis 5ten Index
-v(4::2)     ! Alle Elemente ab Index 4 mit geradem Index
-v(4:2:-1)   ! Elemente von 4 bis 2 mit absteigendem Index
-! Also: v(:) == v == v(1:10) == v(1:)
+v(3:)       ! Get everything from 3rd index
+v(:5)       ! Get everything to 5th index
+v(4::2)     ! Get everything from the 4th index at even indices
+v(4:2:-1)   ! Get elements from the 4th to 2nd index in descending order
+! Therefore: v(:) == v == v(1:10) == v(1:)
 
-v = w               ! kopiert alle Elemente von w nach v
-A = A + 1           ! Addiert 1 zu allen Elementen von A (geht auch mit allen anderen Operatoren)
-v = A(3, :)         ! kopiert 3te Reihe von A nach v
-A(2:5, 3) = v(4:7)  ! kopiert Bereiche in das andere Array
+v = w               ! Copy all values from w to v
+A = A + 1           ! Add 1 to all elements of A (the same with other operators)
+v = A(3, :)         ! Copy the 3rd row from A to v
+A(2:5, 3) = v(4:7)  ! Copy a section from v to A
 ```
 
 ```fortran
-reshape([1, 2, 3, 4, 5, 6], shape=[2, 3])   ! Bringt 1x6 Array in neue Form 2x3
+reshape([1, 2, 3, 4, 5, 6], shape=[2, 3])   ! Reshapes 1x6 array into 2x3 array
 
-lbound(A), ubound(A)  ! get niedrigste/höchste Indices (returned einen Vektor)
-size(A)               ! get Größe
-shape(A)              ! get Dimensionen (returned einen Vektor)
-minval(A), maxval(A)  ! kleinstes/größtes Element
+lbound(A), ubound(A)  ! Get highest/lowest indices (returns vector)
+size(A)               ! Get size
+shape(A)              ! Get dimensions (returns vektor)
+minval(A), maxval(A)  ! Get largest/smallest element
 
-! Mit Masken, z.b. A > 4 gibt [.true., .false., ...] mit .true. wo A > 4, sonst .false.
-! Wie in R
-count(A > 4)  ! wie oft in der Maske .true. vorkommt
-all(A > 4)    ! wenn Maske nur .true.
-any(A > 4)    ! wenn Maske mind. einmal .true.
+! Masks, e.g. A > 4 yields [.true., .false., ...] with .true. where A > 4, else .false.
+count(A > 4)  ! Counts all .true. occurences
+all(A > 4)    ! True if all elements are true
+any(A > 4)    ! At least one element true
 ```
 
-Mathe intrinsics wie `abs`, `sin`, `exp` usw. wirken auf ein Array elementwise (Geil!).
+Math intrinsics like `abs`, `sin`, `exp` etc. act element-wise to an array.
 
 ```fortran
-matmul(A, B)      ! Matrixmultiplikation
-norm2(v)          ! Betrag, ACHTUNG nicht mit abs() verwechseln
+matmul(A, B)      ! Matrix multiplication
+norm2(v)          ! Length of a spacial vector, not to confuse with abs()
 
-! Selbsterklärend:
+! Furthermore:
 transpose(A)
 dot_product(v, w)
 sum(A), product(A)
