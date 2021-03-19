@@ -285,46 +285,46 @@ sum(A), product(A)
 
 #### do ... end do
 ```fortran
-do i = 1, 10   ! beide inklusive (also in dem Fall 10 mal loopen)
+do i = 1, 10   ! both inclusive, this would loop 10 times
     ! something here
 end do
 
-do i = 1, 10, 2   ! Schrittweite 2, optional
+do i = 1, 10, 2   ! Step size 2
     ! something here
 end do
 
 do
-    ! unendliche loop
+    ! infinite loop
 end do
 
-Schleife : do i = 1, 5
-    ! gibt Schleife den Namen "Schleife"
-end do Schleife
+Loop : do i = 1, 5
+    ! give label "Loop" to loop
+end do Loop
 ```
 Keywords:
 ```fortran
-exit        ! bricht aktuelle Schleife ab (break in Python)
-exit Name   ! bricht alle aktuellen Schleifen bis inklusive Schleife "Name" ab
-cycle       ! macht mit nächster Iteration weiter (continue in Python)
+exit        ! breaks current loop
+exit Name   ! breaks all inner loops until loop "Name"
+cycle       ! continues with next cycle
 ```
-**Unendliche loops wenns geht nicht benutzen. [David Hilbert lässt grüßen.](https://de.wikipedia.org/wiki/Halteproblem)**  
-**Man kann die Zählvariable in der Schleife nicht ändern. Auch Änderungen an den von/bis Werten ändert nichts.**  
-**Um Bugs vorzubeugen, die Zählvariable nach der Schleife nicht mehr benutzen (außer für andere Schleifen).**
+**One can't change the counting variable inside the loop, it will be overwritten next iteration.**  
+**To prevent bugs, don't use the counting variable after the loop.**
 
 #### implicit do
-Eigentlich nur gut um Arrays zu assignen oder printen.
+Useful to assign elements to arrays or print them.
 ```fortran
-v = (/ (i, i=1,5) /) ! Macht Vektor (1, 2, 3, 4, 5)
+v = (/ (i, i=1,5) /) ! Creates vector (1, 2, 3, 4, 5)
 ```
-*An der Stelle ein kleines uff für die Syntax... jede normale Sprache parsed das als i, dann i=1, dann 5.*
-```fortran
-print *, (v(i), i=1,3)              ! printet  1  2  3
+**Pay attention to the syntax of ","**  
 
-print *, ((A(i,j), i=1,3), j=1,3)   ! kann man auch verschachteln für noch weniger readability
+```fortran
+print *, (v(i), i=1,3)              ! prints  1  2  3
+
+print *, ((A(i,j), i=1,3), j=1,3)   ! Can be nested for even less readability
 ```
 
 ### if ... then ... else
-Einfach ein Beispiel:
+
 ```
 if (a > 0) then
     a = 0
@@ -334,53 +334,52 @@ else
     a = 1
 end if
 ```
-Den `else if` Block kann man natürlich auch weg lassen, wenn man nur `if` haben will geht auch:
+`else if` and/or `else` block can be ommitted:
 ```
 if (a > 0) a = 0
 ```
 
 ### case
-Gibts in Fortran, braucht aber keiner.
+Redundant.
 
 
 ## Intrinsic functions
-Funktionen die man sich nicht erst selber definieren muss.
 
-### Mathe
+### Math
 ```fortran
-! Selbsterklärend
+! Self-explanatory
 abs(x)
 sqrt(x)
 sin(x), cos(x), tan(x)
 asin(x), acos(x), atan(x)
 exp(x), log(x)
 
-mod(x, y) ! Divisionsrest von x / y
-** ! ist "hoch", also z.B. 5**3 = 125
+mod(x, y) ! Remainder of x / y
+** ! exponentiation, e.g. 5**3 = 125
 ```
 
 ### Type Conversion
 ```fortran
-int(x)      ! real in integer verwandeln (abrunden)
-nint(x)     ! real auf integer runden
-floor(x)    ! gleich wie int
-fraction(x) ! alles vor dem komma auf 0 setzen
-real(x)     ! integer in real verwandeln
+int(x)      ! real to integer (flooring)
+nint(x)     ! real to integer (rounding)
+floor(x)    ! same as int()
+fraction(x) ! remove the integer part of a decimal number
+real(x)     ! integer to real
 ```
 
-### Hilfsmethoden für Numerics
-`[i,r,c]` ist hier als Platzhalter für **eine** Variable des Datentyps i für integer, r für real und c für complex.
+### Helper methods for numerics
+In this case `[i,r,c]` are placeholders for **one** variable of type i for integer, r for real and c for complex.
 ```fortran
-digits([i,r])       ! binary precision (signifikante Stellen in binär)
-precision([r,c])    ! decimal precision (für real hilfreicher als digits)
-range([i,r,c])      ! exponent range in decimal (größter möglicher exponent)
-epsilon([r])        ! Kleinste Zahl e, so dass 1 + e immernoch größer als 1 ist. Garnicht mal so unpraktisch für numerische Berechnungen, wo man viele kleine Werte aufaddiert.
-huge([i,r])         ! Größte Zahl mit selbem kind
-tiny([r])           ! Kleinste (positive) Zahl
-radix([i,r])        ! Krass unnötig
+digits([i,r])       ! binary precision (significant digits in binary)
+precision([r,c])    ! decimal precision (more useful for reals than digits)
+range([i,r,c])      ! exponent range in decimal (largest possible exponent)
+epsilon([r])        ! Smallest number e, so that 1 + e is still larger than 1. Useful for calculations with approximate precision and a lot of addition.
+huge([i,r])         ! Biggest number of same kind
+tiny([r])           ! Smallest (positive) number
+radix([i,r])        ! Very unnecessary
 ```
 
-### Weitere
+### Others
 ```fortran
 max(x, y, ...)
 min(x, y, ...)
