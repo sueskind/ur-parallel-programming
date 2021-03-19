@@ -26,7 +26,7 @@
  * [Custom Types](#Custom-Types)
    * [Inheritance](#Inheritance)
  * [Modules](#Modules)
- * [Use multiple files](#Use multiple files)
+ * [Use multiple files](#Use-multiple-files)
  * [Brief style guide](#Brief-style-guide)
 
 TODO:
