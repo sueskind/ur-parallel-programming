@@ -1,4 +1,6 @@
 # Fortran Cheatsheet
+
+## Table of contents
 - [Hello World](#hello-world)
 - [Basic program structure](#basic-program-structure)
   - [Subroutines](#subroutines)
@@ -26,8 +28,6 @@
 - [Modules](#modules)
 - [Use multiple files](#use-multiple-files)
 - [Brief style guide](#brief-style-guide)
-
-## Table of contents
 
 TODO:
  * Logic .or. .and. ...
