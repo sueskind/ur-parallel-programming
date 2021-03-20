@@ -386,35 +386,33 @@ min(x, y, ...)
 ```
 
 
-## Eigene Types
-Wenn man Bock auf objekt-orientiertes Programmieren hat.
+## Custom types
 ```fortran
-! Definition, das _t ist Konvention für Typenamen
-type irgendwas_t
+! Definition, the _t is convention for type names
+type something_t
     ! Members
     integer :: i
     real    :: r
-end type irgendwas_t
+end type something_t
 
-! Benutzen
-type(irgendwas_t) :: var
+type(something_t) :: var
 
-var = irgendwas_t(1, 5.3) ! Konstruktor call wie in Python, wurde implizit definiert
+var = something_t(1, 5.3) ! Constructur is defined implicitly
 
-var%i = 2   ! Mit % auf die Member zugreifen (ist der Punkt . in Java und Python)
+var%i = 2   ! Access member with %
 ```
 
-### Vererbung bzw. extends
+### Inheritance i.e. extends
 
 ```fortran
-! Hier den doppel-Doppelpunkt beachten (Fortran ist weird)
+!                   Note the colon
 !                          v
 type, extends(irgendwas_t) :: something_t
     integer :: a
 end type something_t
 
-! Ein Objekt vom type something_t hat jetzt Member i, r und a und wird erzeugt mit something_t(18, 4.2, 4)
-!                                                                                              i    r   a
+! An object of type something_t now has members i, r and a and is created by something_t(18, 4.2, 4)
+!                                                                                        i    r   a
 ```
 
 ## Modules
@@ -433,36 +431,34 @@ module Modulname
 
 end module Modulname
 ```
-Importiert wird das dann im Programm mit `use Modulname` vor allen anderen Definitionen (auch for `implicit none`).
+Import a module into a program with `use Modulname` **before** all other definitions (also before `implicit none`).
 
-Normalerweise sind alle Member im Modul `public`, außer man schreibt ein allein stehendes `private` rein (das kann man mit `public` bei Variablendeklaration wieder aufheben).
+By default all member of a module are `public`, except the module contains `private` (this can be overriden with `public` at variable declaration).
 
 
 
-## Mehrere Files nutzen
-Ein wenig kompliziert, aber macht das Programm deutlich übersichtlicher.
+## Use multiple files
 
 TODO
 
-## Kleiner Style Guide
-Zum Schluss noch ein kleiner Style Guide. Muss man nicht befolgen, aber sieht dann halt kacke aus.
+## Brief style guide
 ```fortran
-! Nach einem Komma ein Leerzeichen:
-print *, "Hallo"
+! Space after comma:
+print *, "Hello"
 do n = 1, 2
 
-! vor und nach einem Operator ein Leerzeichen:
+! Space before and after an operator
 a = 5 + 3 * 4
 x > b
 
-! Bei Variablendeklarierung Tabs benutzen
+! Indent the :: when declaring variables
 integer, paramter   :: a
-real                :: b ! Der ist weiter hinten als nötig, aber sieht gut aus
+real                :: b
 
-! Zeilenlänge nicht über 100-120 Zeichen (je nach präferenz, aber konsequent)
+! Line length not longer than 100-120 characters (depends on preference, but should be used consequently)
 arbeiterunfallversicherungsgesetzistdaslaengsteWortimDudenohneBindestrichaberweilsnurdreiunddreissigBuchstabenhatschreibichdashiernochumaufhundertachtundsiebzigBuchstabenzukommen
 
-! Leere Zeilen zwischen semantisch verschiedenen Code Abschnitten sind euer Freund!
+! Empty lines between semantically different parts of a program
 
-! Variablennamen in camelCase oder snake_case (je nach Präferenz, aber konsequent)
+! Variable names in camelCase or snake_case (depends on preference, but should be used consequently)
 ```
