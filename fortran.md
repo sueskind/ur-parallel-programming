@@ -98,7 +98,7 @@ function distance(x, y)
 end function distance
 ```
 
-#### Variant 2
+#### Variant 3
 ```fortran
 function distance(x, y) result(d)  ! Define which variable will be the return value
   implicit none
