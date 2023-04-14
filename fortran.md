@@ -47,7 +47,7 @@ Compile with `gfortran helloworld.f90` or `gfortran -o outname helloworld.f90`.
 ## Basic program structure
 ```fortran
 program name
-    ! Comments mit '!'
+    ! Comments with '!'
     
     ! >>>Variable declarations here<<<
     
@@ -58,10 +58,10 @@ end program name
 Generally, programs get compiled from top to bottom. Only earlier defined things can be used.
 
 ### Subroutines
-Soubroutines do not have return values.
+Subroutines do not have return values.
 ```fortran
 subroutine name(var1, var2)   ! as many arguments as you wish
-  implicit none   ! otherwise some symbols are predefined
+  implicit none               ! otherwise some symbols are predefined
 
   ! Declare variables
   integer     :: var1
@@ -71,7 +71,7 @@ subroutine name(var1, var2)   ! as many arguments as you wish
   ! >>>Program statements here<<<
 end subroutine name
 ```
-Call subroutines in a programm with `call name(var1, ...)`.
+Call subroutines in a program with `call name(var1, ...)`.
 
 ### Functions
 
@@ -79,7 +79,7 @@ There are 3 major variants to define a function, all are equivalent. Example `di
 
 #### Variant 1
 ```fortran
-real function distance(x, y)  ! Return type in title
+real function distance(x, y)  ! Return type in function signature
   implicit none
   real  :: x, y
 
@@ -117,7 +117,7 @@ integer             :: i        ! Integer
 real                :: r        ! Floating point
 complex             :: c        ! Complex number
 logical             :: l        ! True or false
-character           :: ch       ! Character or strings
+character           :: ch       ! Character or string
 
 integer             :: a, b     ! Declare multiple variables at once
 ```
@@ -133,11 +133,11 @@ parameter       ! Constant, must be immediately initialized (e.g. with = 1.5345)
 ! For functions/subroutines:
 intent(in)      ! Read-only variable
 intent(out)     ! Not supposed to read this variable
-intent(inout)   ! Signals that this variable is vor reading and writing
+intent(inout)   ! Signals that this variable is for reading and writing
 optional        ! Marks an optional parameter, use present() to check for presence
 
 save            ! Save value over multiple function calls
-! Caution: integer :: i = 5 is the same as integer, save :: i = 5. It is advisable to only initialize constants at declaration
+! Caution: 'integer :: i = 5' is the same as 'integer, save :: i = 5'. It is advisable to only initialize constants at declaration
 
 ! For modules:
 private         ! Module visibility
@@ -155,7 +155,7 @@ character(*), parameter :: var2 = "foo bar"  ! Recognize length of constant stri
 
 ```fortran
 ! Determine 'kind' value (kind values are of type 'integer, parameter'):
-integer, parameter  :: ik = selected_int_kind(e)     ! kind value for an integer in range -10^e bis 10^e
+integer, parameter  :: ik = selected_int_kind(e)     ! kind value for an integer in range -10^e to 10^e
 integer, parameter  :: rk = selected_real_kind(p)    ! kind value for a real with guaranteed p digits after the decimal point
 integer, parameter  :: sk = selected_real_kind(p, e) ! kind value for a real with guaranteed p digits after the decimal point and range -10^e to 10^e
 
@@ -173,7 +173,7 @@ Appending `k`, `_k` or `_kind` to the kind variable name is convention.
 
 
 ## Arrays
-Indices start with 1. The last index is inclusive. Number of elements is therefore determined by `last - first + 1`. Fortran allows for defining which is the first and which is the last index. For multidimensional arrays the first index is the fastest one (column-major).
+Indices start with 1. The last index is inclusive. Number of elements is therefore determined by `last - first + 1`. Fortran allows for defining which is the first and which is the last index. For multidimensional arrays the first index is the *fastest* one (column-major).
 
 ### Static Arrays
 Set array size at compile time. -> They are stored on the stack (memory consideration for large arrays).
@@ -182,7 +182,7 @@ integer, dimension(10)        :: v    ! Integer array with 10 elements: v(1), v(
 real, dimension(10, 5)        :: A    ! Real 2D-array with 10x5 elements: A(1, 1), A(2, 1), ..., A(10, 5)
 complex, dimension(10, 5, 3)  :: T    ! Complex 3D-array with 10x5x3 elements: T(1, 1, 1), T(2, 1, 1), ..., T(10, 5, 3)
 
-integer, dimension(-5:3, 4:7) :: M    ! Integer array mit 3-(-5)+1 = 9 times 7-4+1 = 4 elementen: M(-5, 4), M(-4, 4), ..., M(3, 7)
+integer, dimension(-5:3, 4:7) :: M    ! Integer array with 3-(-5)+1 = 9 times 7-4+1 = 4 elements: M(-5, 4), M(-4, 4), ..., M(3, 7)
 
 ! Equivalent:
 integer   :: v(10)
@@ -206,7 +206,7 @@ allocate(A(1, 5:20), B(5, 6)) ! Allocate multiple at the same time
 
 deallocate(v, A, B)           ! Free space
 
-allocated(A)                  ! Useful for if(allocated(A)) deallocate(A)
+allocated(A)                  ! Useful for 'if(allocated(A)) deallocate(A)'
 call move_alloc(A, B)         ! Deallocates A, allocates B. This is a subroutine -> 'call' needed
 ```
 
@@ -257,7 +257,7 @@ reshape([1, 2, 3, 4, 5, 6], shape=[2, 3])   ! Reshapes 1x6 array into 2x3 array
 
 lbound(A), ubound(A)  ! Get highest/lowest indices (returns vector)
 size(A)               ! Get size
-shape(A)              ! Get dimensions (returns vektor)
+shape(A)              ! Get dimensions (returns vector)
 minval(A), maxval(A)  ! Get largest/smallest element
 
 ! Masks, e.g. A > 4 yields [.true., .false., ...] with .true. where A > 4, else .false.
@@ -358,11 +358,11 @@ mod(x, y) ! Remainder of x / y
 ** ! exponentiation, e.g. 5**3 = 125
 ```
 
-### Type Conversion
+### Type conversion
 ```fortran
 int(x)      ! real to integer (flooring)
 nint(x)     ! real to integer (rounding)
-floor(x)    ! same as int()
+floor(x)     ! same as int()
 fraction(x) ! remove the integer part of a decimal number
 real(x)     ! integer to real
 ```
@@ -417,7 +417,7 @@ end type something_t
 
 ## Modules
 ```fortran
-module Modulname
+module Modulename
 
   ! private/public
   ! types
@@ -429,11 +429,11 @@ module Modulname
   ! subroutines
   ! functions
 
-end module Modulname
+end module Modulename
 ```
-Import a module into a program with `use Modulname` **before** all other definitions (also before `implicit none`).
+Import a module into a program with `use Modulename` **before** all other definitions (also before `implicit none`).
 
-By default all member of a module are `public`, except the module contains `private` (this can be overriden with `public` at variable declaration).
+By default all members of a module are `public`, except the module contains `private` (this can be overriden with `public` at variable declaration).
 
 
 
